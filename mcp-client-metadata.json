@@ -1,0 +1,15 @@
+{
+  "client_name": "HEP-Genesis-Agent",
+  "client_uri": "https://github.com/HEP-KE/hep-genesis-agent",
+  "redirect_uris": [
+    "http://127.0.0.1:52814/callback",
+    "http://localhost:52814/callback",
+    "http://127.0.0.1/callback",
+    "http://localhost/callback"
+  ],
+  "grant_types": ["authorization_code", "refresh_token"],
+  "response_types": ["code"],
+  "token_endpoint_auth_method": "none",
+  "software_id": "hep-genesis-agent-desktop",
+  "software_version": "0.1.0"
+}
