@@ -15,18 +15,42 @@ Grab the latest build from
 
 | Platform | File |
 |---|---|
-| macOS | `HEP-Genesis-Agent-<version>.dmg` (unsigned during alpha: right-click → Open the first time, or `xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"`) |
+| macOS | `HEP-Genesis-Agent-<version>.dmg` |
 | Windows | `HEP-Genesis-Agent-Setup-<version>.exe` |
 | Linux | `HEP-Genesis-Agent-<version>.AppImage` or `.deb` |
 
-The HPC backend is a Python package (wheel attached to each release):
+### macOS: "HEP-Genesis-Agent is damaged and can't be opened"
+
+The app is **not damaged** — alpha builds are unsigned, and macOS shows this
+misleading dialog for any unsigned app downloaded with a browser
+(right-click → Open does **not** help for this variant). After copying the
+app to `/Applications`, run this once in Terminal:
 
 ```bash
-pip install hep_genesis-<version>-py3-none-any.whl
+xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"
 ```
 
-Point the app's HPC panel at the Python environment you installed it into
-(the app also auto-detects suitable interpreters on first launch).
+Then open it normally. (This clears macOS's download-quarantine flag; you
+are trusting this build — that's what alpha testing is.)
+
+### Python backend (the `.whl` file)
+
+The desktop app drives a Python backend for MCP servers and HPC dispatch.
+Download the `.whl` from the release, then install it into a Python ≥ 3.10
+environment (conda or venv):
+
+```bash
+conda create -n hep-genesis python=3.12 -y
+conda activate hep-genesis
+pip install 'hep_genesis-<version>-py3-none-any.whl[all]'
+```
+
+(The `[all]` extra pulls the agent + service + HPC dependencies. Use the
+real filename you downloaded.)
+
+Launch the app — it auto-detects conda environments that contain the
+backend on first run; if it doesn't find yours, point the HPC panel's
+"Pick python" at that environment's `python`.
 
 ## First-run checklist
 
