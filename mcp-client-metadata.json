@@ -1,6 +1,7 @@
 {
+  "client_id": "https://hep-ke.github.io/hep-genesis-releases/mcp-client-metadata.json",
   "client_name": "HEP-Genesis-Agent",
-  "client_uri": "https://github.com/HEP-KE/hep-genesis-agent",
+  "client_uri": "https://github.com/HEP-KE/hep-genesis-releases",
   "redirect_uris": [
     "http://127.0.0.1:52814/callback",
     "http://localhost:52814/callback",
