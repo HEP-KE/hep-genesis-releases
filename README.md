@@ -1,7 +1,6 @@
 # HEP-Genesis-Agent — releases
 
-Alpha builds of **HEP-Genesis-Agent**, a desktop + CLI agent for computational
-science: a chat agent that drives MCP tool servers and dispatches compute to
+Alpha builds of **HEP-Genesis-Agent**, a desktop + CLI agentic client or harness for HEP: a chat agent that drives MCP tool servers and dispatches compute to
 DOE HPC facilities (ALCF Polaris, NERSC Perlmutter) via IRI + Globus.
 
 This repository carries **installers and metadata only** — the source lives in
@@ -19,16 +18,16 @@ Grab the latest build from
 | Windows | `HEP-Genesis-Agent-Setup-<version>.exe` |
 | Linux | `HEP-Genesis-Agent-<version>.AppImage` or `.deb` |
 
-**Most testers only need the app.** Chat, research runs, reports, and
+**Most testers only need the app from the dmg file** Chat, research runs, reports, and
 remote (hosted) MCP tool servers — including their OAuth sign-in — work with
-no Python installed. The `.whl` below is only for the **HPC tier**: local
+no Python installed. The `.whl`: local
 science MCP servers and dispatching compute to ALCF/NERSC, which also
 requires a facility account with an allocation and
 [Globus Connect Personal](https://www.globus.org/globus-connect-personal)
 running. Without it the app simply shows explanatory messages in the HPC
 panel; everything else works.
 
-### macOS: "HEP-Genesis-Agent is damaged and can't be opened"
+### macOS warning may show: "HEP-Genesis-Agent is damaged and can't be opened"
 
 The app is **not damaged** — alpha builds are unsigned, and macOS shows this
 misleading dialog for any unsigned app downloaded with a browser
@@ -42,7 +41,7 @@ xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"
 Then open it normally. (This clears macOS's download-quarantine flag; you
 are trusting this build — that's what alpha testing is.)
 
-### Python backend (the `.whl` file) — HPC tier only
+### Python backend (the `.whl` file) 
 
 The desktop app drives a Python backend for local MCP servers and HPC
 dispatch. Download the `.whl` from the release, then install it into a
