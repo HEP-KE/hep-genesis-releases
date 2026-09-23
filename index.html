@@ -1,0 +1,875 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>HEP-Genesis-Agent</title>
+<meta name="description" content="A desktop and command-line client for agentic scientific computing: a chat agent that drives MCP tool servers and runs compute locally or on DOE HPC facilities through IRI and Globus.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Ccircle cx='16.5' cy='7.5' r='3.4' fill='%23a96b0e'/%3E%3Cpath d='M14 10.5 3.5 20.5M15.5 12.5 8 19.5M12.5 9.5 6 14.5' stroke='%23a96b0e' stroke-width='1.4' stroke-linecap='round' opacity='.65'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=STIX+Two+Text:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+/* Same design tokens as the desktop app ("fog and brass"). */
+:root {
+  --bg0: #e1dfd8;
+  --bg1: #eae8e1;
+  --bg2: #f2f0ea;
+  --bg3: #d3d0c7;
+  --line: #c2bfb5;
+  --line-soft: #d2cfc6;
+  --text: #26292e;
+  --text-dim: #5d6570;
+  --text-faint: #8b919b;
+  --accent: #a96b0e;
+  --accent-soft: rgba(169, 107, 14, 0.12);
+  --accent-text: #8a5709;
+  --ok: #1e8a5c;
+  --paper: #fdfcf9;
+  --paper-ink: #23211d;
+  --shadow: 0 1px 2px rgba(38, 41, 46, .06), 0 4px 14px rgba(38, 41, 46, .05);
+  --shadow-lg: 0 2px 4px rgba(38, 41, 46, .05), 0 18px 48px rgba(38, 41, 46, .12);
+  --font-ui: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --font-serif: 'STIX Two Text', 'Times New Roman', Georgia, serif;
+  --radius: 10px;
+  --radius-sm: 6px;
+  --wrap: 1080px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; margin: 0; }
+html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+body {
+  font-family: var(--font-ui);
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg0);
+  -webkit-font-smoothing: antialiased;
+}
+a { color: var(--accent-text); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+code, pre, kbd { font-family: var(--font-mono); }
+p code, li code, td code {
+  font-size: .86em;
+  background: var(--bg2);
+  border: 1px solid var(--line-soft);
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+img { max-width: 100%; }
+[hidden] { display: none !important; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition-duration: .001s !important; }
+}
+
+.wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: 24px; }
+@media (max-width: 480px) { .wrap { padding-inline: 16px; } }
+
+/* ---------------------------------------------------------------- top bar */
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 10;
+  background: rgba(225, 223, 216, .86);
+  backdrop-filter: saturate(1.4) blur(10px);
+  -webkit-backdrop-filter: saturate(1.4) blur(10px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 24px; height: 56px; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--text); font-weight: 600; letter-spacing: -.005em; }
+.brand:hover { text-decoration: none; }
+.brand svg { width: 26px; height: 26px; }
+.nav { display: flex; gap: 4px; margin-left: auto; }
+.nav a {
+  color: var(--text-dim);
+  font-size: 14px;
+  padding: 6px 11px;
+  border-radius: var(--radius-sm);
+}
+.nav a:hover { background: var(--bg3); color: var(--text); text-decoration: none; }
+.nav a.cta { color: var(--accent-text); background: var(--accent-soft); font-weight: 500; }
+@media (max-width: 760px) {
+  .nav a:not(.cta) { display: none; }
+}
+
+/* ------------------------------------------------------------------- hero */
+.hero { padding-block: 72px 40px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em;
+  color: var(--text-dim);
+  border: 1px solid var(--line);
+  background: var(--bg1);
+  padding: 4px 10px; border-radius: 999px;
+}
+.eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+h1 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(34px, 5.2vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -.012em;
+  margin: 22px 0 18px;
+  max-width: 17ch;
+}
+h1 em { font-style: italic; color: var(--accent-text); }
+.lede { font-size: 18px; color: var(--text-dim); max-width: 60ch; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; align-items: center; }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  font: inherit; font-size: 15px; font-weight: 500;
+  padding: 11px 18px;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--bg2);
+  color: var(--text);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .15s;
+}
+.btn:hover { text-decoration: none; background: var(--paper); border-color: var(--text-faint); }
+.btn svg { width: 17px; height: 17px; flex-shrink: 0; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 1px 0 rgba(0,0,0,.06), 0 6px 18px rgba(169,107,14,.22); }
+.btn.primary:hover { background: #955e0b; border-color: #955e0b; }
+.btn small { font-weight: 400; opacity: .8; font-size: 12.5px; font-family: var(--font-mono); }
+.meta-line { font-size: 13px; color: var(--text-faint); margin-top: 14px; font-family: var(--font-mono); }
+
+/* ------------------------------------------------------------ app mockup */
+.shot { margin-top: 56px; }
+.window {
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--bg0);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.window-bar {
+  height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 14px;
+  background: var(--bg1); border-bottom: 1px solid var(--line-soft);
+}
+.window-bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--bg3); display: block; }
+.window-bar span { margin-left: 10px; font-size: 12px; color: var(--text-faint); }
+.window-body { display: grid; grid-template-columns: 76px minmax(0,1fr) 300px; min-height: 440px; }
+.rail {
+  background: var(--bg1); border-right: 1px solid var(--line-soft);
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 0;
+}
+.rail .logo { width: 30px; height: 30px; margin-bottom: 14px; }
+.rail b {
+  width: 60px; padding: 8px 0 6px; border-radius: var(--radius-sm);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  font-size: 10px; font-weight: 400; color: var(--text-faint);
+}
+.rail b svg { width: 18px; height: 18px; }
+.rail b.on { color: var(--accent-text); background: var(--accent-soft); }
+.chat { padding: 22px 26px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.bubble-user {
+  align-self: flex-end; max-width: 78%;
+  background: var(--bg2); border: 1px solid var(--line-soft);
+  padding: 9px 13px; border-radius: 12px 12px 3px 12px; font-size: 13.5px;
+}
+.plan {
+  background: var(--bg1); border: 1px solid var(--line-soft); border-radius: var(--radius);
+  padding: 12px 14px; font-size: 13px;
+}
+.plan h4 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; margin-bottom: 8px; }
+.plan li { list-style: none; display: flex; gap: 9px; align-items: baseline; padding: 2px 0; color: var(--text-dim); }
+.plan li::before { content: ''; width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid var(--line); flex-shrink: 0; transform: translateY(1px); }
+.plan li.done { color: var(--text); }
+.plan li.done::before { background: var(--ok); border-color: var(--ok); }
+.plan li.run::before { border-color: var(--accent); background: var(--accent-soft); }
+.plan ul { padding: 0; }
+.tool {
+  font-family: var(--font-mono); font-size: 12px;
+  background: var(--bg2); border: 1px solid var(--line-soft); border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text-dim);
+  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
+}
+.tool b { color: var(--text); font-weight: 500; }
+.composer {
+  margin-top: auto; border: 1px solid var(--line); background: var(--bg2); border-radius: 12px;
+  padding: 10px 12px; display: flex; flex-direction: column; gap: 10px;
+}
+.composer .ph { color: var(--text-faint); font-size: 13.5px; }
+.composer .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; font-size: 12px; }
+.seg span { padding: 3px 10px; color: var(--text-dim); }
+.seg span.on { background: var(--text); color: var(--bg2); }
+.pill { font-size: 12px; border: 1px solid var(--line); border-radius: 7px; padding: 3px 10px; color: var(--text-dim); display: inline-flex; gap: 6px; align-items: center; }
+.pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.side { border-left: 1px solid var(--line-soft); background: var(--bg1); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+.side h5 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+.paper {
+  background: var(--paper); color: var(--paper-ink); border: 1px solid var(--line-soft); border-radius: 4px;
+  padding: 16px 16px 18px; font-family: var(--font-serif); box-shadow: var(--shadow);
+}
+.paper .t { font-size: 15px; font-weight: 500; line-height: 1.25; }
+.paper .a { font-size: 11px; font-style: italic; color: #6b675e; margin: 4px 0 10px; }
+.paper .ln { height: 5px; background: #e7e3da; border-radius: 2px; margin: 6px 0; }
+.paper svg { width: 100%; height: 74px; margin: 8px 0 2px; display: block; }
+.paper .cap { font-size: 10px; color: #6b675e; }
+.job { font-family: var(--font-mono); font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; color: var(--text-dim); padding: 7px 10px; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--bg2); }
+.job .ok { color: var(--ok); }
+.shot-caption { font-size: 12.5px; color: var(--text-faint); text-align: center; margin-top: 14px; }
+@media (max-width: 900px) { .window-body { grid-template-columns: 64px minmax(0,1fr); } .side { display: none; } .rail b { width: 52px; } }
+@media (max-width: 520px) { .window-body { grid-template-columns: minmax(0,1fr); }
+  .btn small { display: none; } .bubble-user { max-width: 92%; } .rail { display: none; } .chat { padding: 16px; } }
+
+/* --------------------------------------------------------------- sections */
+section { padding: 80px 0; border-top: 1px solid var(--line-soft); }
+.kicker { font-family: var(--font-mono); font-size: 12px; letter-spacing: .06em; color: var(--accent-text); text-transform: uppercase; }
+h2 {
+  font-family: var(--font-serif); font-weight: 500;
+  font-size: clamp(26px, 3.4vw, 36px); line-height: 1.15; letter-spacing: -.01em;
+  margin: 10px 0 14px;
+}
+h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; letter-spacing: -.003em; }
+.sub { color: var(--text-dim); max-width: 64ch; font-size: 16.5px; }
+.head { margin-bottom: 40px; }
+
+.grid { display: grid; gap: 16px; }
+.g3 { grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); }
+.g2 { grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); }
+.grid > * { min-width: 0; }
+.card {
+  background: var(--bg1); border: 1px solid var(--line-soft); border-radius: var(--radius);
+  padding: 22px; box-shadow: var(--shadow);
+}
+.card p { color: var(--text-dim); font-size: 14.5px; }
+.card .ic {
+  width: 34px; height: 34px; border-radius: 8px; display: grid; place-items: center;
+  background: var(--accent-soft); color: var(--accent-text); margin-bottom: 14px;
+}
+.card .ic svg { width: 18px; height: 18px; }
+
+/* ------------------------------------------------------------- downloads */
+.dl-table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+.dl-wrap { overflow-x: auto; background: var(--bg1); border: 1px solid var(--line-soft); border-radius: var(--radius); box-shadow: var(--shadow); }
+.dl-table th, .dl-table td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line-soft); vertical-align: middle; }
+.dl-table tr:last-child td { border-bottom: 0; }
+.dl-table th { font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; background: var(--bg2); }
+.dl-table td:first-child { font-weight: 500; white-space: nowrap; }
+.dl-table .file { font-family: var(--font-mono); font-size: 12.5px; color: var(--text-dim); }
+.dl-table .status { font-size: 13px; color: var(--text-faint); }
+.dl-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 500; white-space: nowrap; }
+.dl-link svg { width: 14px; height: 14px; }
+.tag { font-family: var(--font-mono); font-size: 11px; padding: 2px 7px; border-radius: 5px; border: 1px solid var(--line); color: var(--text-dim); white-space: nowrap; }
+.tag.ok { color: var(--ok); border-color: rgba(30,138,92,.35); background: rgba(30,138,92,.07); }
+
+.tiers { margin-top: 28px; }
+.tier .n { font-family: var(--font-mono); font-size: 12px; color: var(--text-faint); margin-bottom: 8px; }
+.tier ul { padding-left: 18px; color: var(--text-dim); font-size: 14.5px; margin-top: 10px; }
+.tier li { margin: 3px 0; }
+
+.note {
+  margin-top: 16px; display: flex; gap: 14px; align-items: flex-start;
+  background: var(--paper); border: 1px solid var(--line-soft); border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm); padding: 16px 18px; font-size: 14.5px; color: var(--text-dim);
+}
+.note strong { color: var(--text); font-weight: 600; }
+.note > div { min-width: 0; flex: 1; }
+
+/* ------------------------------------------------------------------ code */
+.code {
+  position: relative; margin-top: 12px;
+  background: #2a2c30; color: #e6e3da; border-radius: var(--radius-sm);
+  font-size: 13px; line-height: 1.65;
+}
+.code pre { padding: 14px 16px; overflow-x: auto; }
+.code .c { color: #8f959e; }
+.code .p { color: #d9a24a; user-select: none; }
+.copy {
+  position: absolute; top: 8px; right: 8px;
+  font: 500 11px var(--font-ui); color: #bdb9ae; background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12); border-radius: 5px; padding: 3px 8px; cursor: pointer;
+  opacity: 0; transition: opacity .15s;
+}
+.code:hover .copy, .copy:focus-visible { opacity: 1; }
+@media (hover: none) { .copy { opacity: 1; } }
+
+/* ----------------------------------------------------------------- steps */
+.steps { counter-reset: s; display: grid; gap: 0; }
+.step { display: grid; grid-template-columns: 44px 1fr; gap: 18px; padding: 20px 0; border-bottom: 1px solid var(--line-soft); }
+.step:last-child { border-bottom: 0; }
+.step::before {
+  counter-increment: s; content: counter(s);
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1px solid var(--line); background: var(--bg2);
+  display: grid; place-items: center; font-family: var(--font-mono); font-size: 13px; color: var(--accent-text);
+}
+.step p { color: var(--text-dim); font-size: 14.5px; }
+.path { font-family: var(--font-mono); font-size: 12.5px; color: var(--text); background: var(--bg2); border: 1px solid var(--line-soft); border-radius: 4px; padding: 1px 6px; white-space: nowrap; }
+
+/* ------------------------------------------------------------------ tabs */
+.tabs { display: inline-flex; border: 1px solid var(--line); border-radius: 9px; padding: 3px; background: var(--bg1); gap: 2px; margin-bottom: 26px; flex-wrap: wrap; }
+.tabs button {
+  font: 500 14px var(--font-ui); color: var(--text-dim); background: none; border: 0;
+  padding: 7px 16px; border-radius: 6px; cursor: pointer;
+}
+.tabs button[aria-selected="true"] { background: var(--text); color: var(--bg2); }
+
+/* ------------------------------------------------------------- CLI table */
+.cmds { width: 100%; border-collapse: collapse; font-size: 14px; }
+.cmds td { padding: 10px 14px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+.cmds tr:last-child td { border-bottom: 0; }
+.cmds td:first-child { font-family: var(--font-mono); font-size: 12.5px; white-space: nowrap; color: var(--text); }
+.cmds td:last-child { color: var(--text-dim); }
+
+/* --------------------------------------------------------------- diagram */
+.flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin-top: 8px; }
+.flow .st { position: relative; padding: 18px 16px 18px 0; }
+.flow .st::before { content: ''; position: absolute; top: 26px; left: 18px; right: 0; height: 1px; background: var(--line); }
+.flow .st:last-child::before { display: none; }
+.flow .dotn {
+  position: relative; z-index: 1; width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg0); border: 2px solid var(--accent); margin: 0 0 14px 0;
+}
+.flow .st:last-child .dotn { background: var(--accent); }
+.flow h3 { font-size: 14.5px; }
+.flow p { font-size: 13.5px; color: var(--text-dim); }
+@media (max-width: 760px) {
+  .flow { grid-template-columns: 1fr; }
+  .flow .st { padding: 0 0 18px 34px; }
+  .flow .st::before { top: 18px; bottom: 0; left: 8px; right: auto; width: 1px; height: auto; }
+  .flow .dotn { position: absolute; left: 0; top: 0; }
+}
+
+.arch { overflow-x: auto; }
+.arch svg { display: block; min-width: 720px; width: 100%; height: auto; }
+
+/* ---------------------------------------------------------------- footer */
+footer { border-top: 1px solid var(--line-soft); padding: 40px 0 56px; color: var(--text-faint); font-size: 13.5px; }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 20px 40px; justify-content: space-between; align-items: flex-start; }
+footer .links { display: flex; gap: 20px; flex-wrap: wrap; }
+footer a { color: var(--text-dim); }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="logo" viewBox="0 0 24 24" fill="none">
+      <circle cx="16.5" cy="7.5" r="3.4" fill="#a96b0e"/>
+      <path d="M14 10.5 3.5 20.5M15.5 12.5 8 19.5M12.5 9.5 6 14.5" stroke="#a96b0e" stroke-width="1.4" stroke-linecap="round" opacity=".65"/>
+    </symbol>
+    <symbol id="i-dl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10.5 12 15.5l5-5M5 19.5h14"/></symbol>
+    <symbol id="i-apple" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.9-.8-3.1-.8-1.6 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.4-.9-2.4-3.8ZM14.1 5.8c.6-.8 1.1-1.9 1-2.9-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.8 1 .1 2.1-.5 2.7-1.3Z"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 5.5h16v10H9l-5 4v-14Z" stroke-linejoin="round"/></symbol>
+    <symbol id="i-model" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="5" width="14" height="14" rx="3"/><path d="M9 2.5v2.5M15 2.5v2.5M9 19v2.5M15 19v2.5M2.5 9H5M2.5 15H5M19 9h2.5M19 15h2.5"/></symbol>
+    <symbol id="i-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="4" width="16" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="16" height="6.5" rx="1.5"/><path d="M8 7.25h.01M8 16.75h.01" stroke-width="2.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-hpc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20V9l4-3v14M10 20V4l5 3v13M17 20v-9l3 2v7M2.5 20h19"/></symbol>
+    <symbol id="i-skill" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3.5h9l3 3v14H6z" stroke-linejoin="round"/><path d="M9 11h6M9 14.5h6M9 7.5h3"/></symbol>
+    <symbol id="i-mem" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 4.5c-4 0-7 2.4-7 6 0 2.2 1.1 3.6 2.5 4.6V19l3-1.6c.5.1 1 .1 1.5.1 4 0 7-2.4 7-6s-3-7-7-7Z" stroke-linejoin="round"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="M12 2.8v2.6M12 18.6v2.6M21.2 12h-2.6M5.4 12H2.8M18.5 5.5l-1.8 1.8M7.3 16.7l-1.8 1.8M18.5 18.5l-1.8-1.8M7.3 7.3 5.5 5.5"/></symbol>
+    <symbol id="i-term" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="15" rx="2"/><path d="m7 10 3 2.5L7 15M12.5 15h4.5"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3.5h8.5L18 7v13.5H6z" stroke-linejoin="round"/><path d="M9 12.5h6M9 16h6"/></symbol>
+    <symbol id="i-graph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="12" cy="18" r="2.3"/><path d="M8 7.2 10.8 16M16 7.2 13.2 16M8.3 6h7.4"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8.5 7.5-4.5 4.5 4.5 4.5M15.5 7.5 20 12l-4.5 4.5M13.5 5l-3 14"/></symbol>
+    <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3.5 6.5h6l2 2h9v10h-17z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></symbol>
+  </defs>
+</svg>
+
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top"><svg><use href="#logo"/></svg>HEP-Genesis-Agent</a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#overview">Overview</a>
+      <a href="#install">Install</a>
+      <a href="#desktop">Desktop</a>
+      <a href="#cli">CLI</a>
+      <a href="#hpc">HPC</a>
+      <a class="cta" href="#install">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <!-- ============================================================ hero -->
+  <div class="wrap hero">
+    <span class="eyebrow"><span class="dot"></span><span id="ver-eyebrow">Alpha release</span></span>
+    <h1>An agent for scientific computing, <em>on your laptop or on HPC</em>.</h1>
+    <p class="lede">
+      HEP-Genesis-Agent is a desktop and command-line client. A chat agent calls
+      tools on MCP servers and runs compute either on your machine or on DOE
+      facilities (ALCF Polaris, NERSC Perlmutter) through IRI and Globus.
+    </p>
+    <div class="actions">
+      <a class="btn primary" id="hero-dmg" href="https://github.com/HEP-KE/hep-genesis-releases/releases/latest">
+        <svg><use href="#i-apple"/></svg>
+        <span>Download for macOS</span>
+        <small id="hero-dmg-ver">Apple silicon</small>
+      </a>
+      <a class="btn" href="#install">Other platforms &amp; the Python backend</a>
+    </div>
+    <p class="meta-line" id="hero-meta">Free · MIT licensed · unsigned alpha build</p>
+
+    <figure class="shot" aria-label="Illustration of the desktop app">
+      <div class="window">
+        <div class="window-bar"><i></i><i></i><i></i><span>HEP-Genesis-Agent</span></div>
+        <div class="window-body">
+          <div class="rail" aria-hidden="true">
+            <svg class="logo"><use href="#logo"/></svg>
+            <b class="on"><svg><use href="#i-chat"/></svg>Chat</b>
+            <b><svg><use href="#i-model"/></svg>Models</b>
+            <b><svg><use href="#i-server"/></svg>Servers</b>
+            <b><svg><use href="#i-hpc"/></svg>HPC</b>
+            <b><svg><use href="#i-skill"/></svg>Skills</b>
+            <b><svg><use href="#i-mem"/></svg>Memory</b>
+            <b><svg><use href="#i-gear"/></svg>Settings</b>
+          </div>
+          <div class="chat">
+            <div class="bubble-user">Compute a linear matter power spectrum for Planck 2018 parameters and compare it with a 5% higher σ₈.</div>
+            <div class="plan">
+              <h4>Plan · Research mode</h4>
+              <ul>
+                <li class="done">Build the k-grid for the theory spectrum</li>
+                <li class="done">Compute the baseline P(k) on Polaris</li>
+                <li class="run">Compute the σ₈ variant and the ratio</li>
+                <li>Write the report with figures</li>
+              </ul>
+            </div>
+            <div class="tool"><b>compute_power_spectrum</b> · target=polaris · job 7550816 · staged 9 files over Globus</div>
+            <div class="composer">
+              <span class="ph">Ask a follow-up…</span>
+              <div class="row">
+                <span class="seg"><span>Quick</span><span class="on">Research</span></span>
+                <span class="pill"><span class="dot"></span>Polaris</span>
+              </div>
+            </div>
+          </div>
+          <aside class="side" aria-hidden="true">
+            <h5>Report</h5>
+            <div class="paper">
+              <div class="t">Sensitivity of P(k) to σ₈</div>
+              <div class="a">generated report · 2 figures</div>
+              <div class="ln" style="width:94%"></div><div class="ln" style="width:88%"></div><div class="ln" style="width:70%"></div>
+              <svg viewBox="0 0 200 74" preserveAspectRatio="none">
+                <path d="M4 6v64h192" fill="none" stroke="#b9b4a8" stroke-width="1"/>
+                <path d="M6 62C30 58 48 40 70 26s36-14 52-8 40 22 72 36" fill="none" stroke="#23211d" stroke-width="1.4"/>
+                <path d="M6 60C30 55 48 35 70 20s36-14 52-8 40 20 72 34" fill="none" stroke="#a96b0e" stroke-width="1.4" stroke-dasharray="4 3"/>
+              </svg>
+              <div class="cap">Figure 1. Linear P(k), baseline and σ₈ variant.</div>
+            </div>
+            <h5>Jobs</h5>
+            <div class="job"><span>polaris · 7550816</span><span class="ok">done</span></div>
+            <div class="job"><span>polaris · 7550842</span><span>running</span></div>
+          </aside>
+        </div>
+      </div>
+      <figcaption class="shot-caption">Illustration of the app's layout. The prompt, plan, and jobs are examples.</figcaption>
+    </figure>
+  </div>
+
+  <!-- ======================================================== overview -->
+  <section id="overview">
+    <div class="wrap">
+      <div class="head">
+        <div class="kicker">Overview</div>
+        <h2>What it does</h2>
+        <p class="sub">One client for model endpoints, MCP tool servers, and facility compute. The desktop app and the CLI share the same backend, projects, skills, and memory.</p>
+      </div>
+      <div class="grid g3">
+        <div class="card">
+          <div class="ic"><svg><use href="#i-chat"/></svg></div>
+          <h3>Two chat modes</h3>
+          <p><em>Quick</em>: one agent calls tools directly. <em>Research</em>: a lead agent writes a plan, a worker runs it step by step, and the run ends in a written report. The app shows a live graph of the running agent.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg><use href="#i-server"/></svg></div>
+          <h3>MCP servers</h3>
+          <p>Connect stdio and streamable-HTTP servers, including hosted HEP-KE servers and their OAuth sign-in. Each server shows its tool list and logs.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg><use href="#i-hpc"/></svg></div>
+          <h3>Local or HPC</h3>
+          <p>A target picker sends the same tool call to your machine, to Polaris (PBS), or to Perlmutter (Slurm). Staging goes over Globus Transfer, and job results come back to your laptop.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg><use href="#i-doc"/></svg></div>
+          <h3>Figures and reports</h3>
+          <p>Plots from tools appear inline as numbered figures with captions, and CSV files open as tables. Research reports are set like a preprint, and you can export them to PDF with all figures embedded.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg><use href="#i-model"/></svg></div>
+          <h3>Any OpenAI-compatible model</h3>
+          <p>Enter a base URL, a key, and a model name, plus extra headers if your lab gateway needs them. Presets cover common providers and ALCF's inference gateway. The app encrypts keys with the OS keychain.</p>
+        </div>
+        <div class="card">
+          <div class="ic"><svg><use href="#i-folder"/></svg></div>
+          <h3>Projects and provenance</h3>
+          <p>Each project directory collects run outputs, dispatched-job artifacts, resume state, and provenance. You can link existing codebases so optional coding tasks can build on them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= install -->
+  <section id="install">
+    <div class="wrap">
+      <div class="head">
+        <div class="kicker">Install</div>
+        <h2>Downloads</h2>
+        <p class="sub">Builds are published on <a href="https://github.com/HEP-KE/hep-genesis-releases/releases">GitHub Releases</a>. The links below always point to the latest release<span id="rel-date"></span>.</p>
+      </div>
+
+      <div class="dl-wrap">
+        <table class="dl-table">
+          <thead><tr><th>Platform</th><th>File</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+            <tr>
+              <td>macOS · Apple silicon</td>
+              <td class="file" id="f-dmg">HEP-Genesis-Agent-*-arm64.dmg</td>
+              <td><span class="tag ok">available</span></td>
+              <td><a class="dl-link" id="l-dmg" href="https://github.com/HEP-KE/hep-genesis-releases/releases/latest"><svg><use href="#i-dl"/></svg>Download</a></td>
+            </tr>
+            <tr>
+              <td>Python backend + CLI</td>
+              <td class="file" id="f-whl">hep_genesis-*-py3-none-any.whl</td>
+              <td><span class="tag ok">available</span></td>
+              <td><a class="dl-link" id="l-whl" href="https://github.com/HEP-KE/hep-genesis-releases/releases/latest"><svg><use href="#i-dl"/></svg>Download</a></td>
+            </tr>
+            <tr>
+              <td>Windows</td>
+              <td class="file" id="f-exe">HEP-Genesis-Agent-Setup-*.exe</td>
+              <td id="s-exe"><span class="tag">not yet published</span></td>
+              <td id="c-exe"></td>
+            </tr>
+            <tr>
+              <td>Linux</td>
+              <td class="file" id="f-lin">*.AppImage · *.deb</td>
+              <td id="s-lin"><span class="tag">not yet published</span></td>
+              <td id="c-lin"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="meta-line">You can still run the Python backend and CLI on Linux and Windows. Installing the wheel works on any platform with Python ≥ 3.10.</p>
+
+      <div class="grid g2 tiers">
+        <div class="card tier">
+          <div class="n">Option 1 · app only</div>
+          <h3>Chat and hosted tools</h3>
+          <p>Most users only need the app. You don't need Python for:</p>
+          <ul>
+            <li>chat with Quick and Research runs, plus reports and PDF export</li>
+            <li>hosted MCP servers and their OAuth sign-in</li>
+            <li>projects, skills, and memory</li>
+            <li>coding tasks, since the harness ships inside the DMG</li>
+          </ul>
+        </div>
+        <div class="card tier">
+          <div class="n">Option 2 · app + backend</div>
+          <h3>Local science servers and HPC dispatch</h3>
+          <p>Install the wheel as well if you need:</p>
+          <ul>
+            <li>bundled stdio MCP servers (<code>hep-genesis-domain</code> and the facility servers)</li>
+            <li>facility sign-in, job tracking, and Polaris or Perlmutter dispatch</li>
+            <li>the headless <code>hep-genesis-agent</code> CLI</li>
+          </ul>
+          <p style="margin-top:10px">HPC dispatch also requires a facility account with an allocation and <a href="https://www.globus.org/globus-connect-personal">Globus Connect Personal</a>.</p>
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-top:16px">
+        <div class="card">
+          <h3>macOS app</h3>
+          <p>Open the DMG and drag the app into <span class="path">/Applications</span>. Alpha builds are not signed yet, so macOS may report that the app “is damaged and can't be opened”. The app isn't damaged: macOS shows this message for any unsigned app downloaded in a browser. Run this command once, then open the app normally:</p>
+          <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"</pre></div>
+        </div>
+        <div class="card">
+          <h3>Python backend</h3>
+          <p>Install the wheel into a dedicated Python ≥ 3.10 environment. The <code>[all]</code> extra adds the agent, service, and HPC dependencies. Replace the filename with the one you downloaded.</p>
+          <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>conda create -n hep-genesis python=3.12 -y
+<span class="p">$ </span>conda activate hep-genesis
+<span class="p">$ </span>pip install '<span id="whl-name">hep_genesis-&lt;version&gt;-py3-none-any.whl</span>[all]'</pre></div>
+          <p style="margin-top:10px">When the app starts for the first time, it looks for conda environments that contain the backend. If it doesn't find yours, choose <em>HPC → Pick python</em> and select that environment's <code>python</code>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================= desktop -->
+  <section id="desktop">
+    <div class="wrap">
+      <div class="head">
+        <div class="kicker">Using the app</div>
+        <h2>The desktop app</h2>
+        <p class="sub">Each area of the app has its own tab in the navigation rail. On first launch, follow the steps below in order. After that, you'll mostly use Chat.</p>
+      </div>
+
+      <div class="grid g2" style="align-items:start">
+        <div class="steps">
+          <div class="step"><div><h3>Add a model endpoint</h3><p><em>Models</em>: choose a preset or enter your gateway's base URL, API key, and model name. ALCF-FIRST only needs a Globus login.</p></div></div>
+          <div class="step"><div><h3>Connect servers</h3><p><em>Servers</em>: the hosted servers connect automatically. Add <code>hep-genesis-domain</code> for local science tools, or any other stdio or HTTP MCP server.</p></div></div>
+          <div class="step"><div><h3>Start the backend (optional)</h3><p><em>HPC</em>: choose the Python environment, start the backend, and sign in to ALCF or NERSC. Globus Connect Personal must be running.</p></div></div>
+          <div class="step"><div><h3>Chat</h3><p>Choose <em>Quick</em> or <em>Research</em> in the composer, and choose where compute runs: <em>On this machine</em>, <em>Polaris</em>, or <em>Perlmutter</em>.</p></div></div>
+        </div>
+
+        <div class="grid" style="gap:12px">
+          <div class="card" style="padding:18px">
+            <table class="cmds">
+              <tr><td>Chat</td><td>Conversations, plans, tool calls, inline figures, and reports.</td></tr>
+              <tr><td>Models</td><td>Model endpoints and presets. Keys are stored in the OS keychain.</td></tr>
+              <tr><td>Servers</td><td>Connect MCP servers and view their tools, logs, and OAuth login.</td></tr>
+              <tr><td>HPC</td><td>Backend, facility sign-in and token expiry, and a jobs list with live logs.</td></tr>
+              <tr><td>Skills</td><td>Agent recipes stored as editable <code>skills/*.md</code> files, plus read-only skills from servers.</td></tr>
+              <tr><td>Memory</td><td>Lessons from <code>MEMORY.md</code> that the agent reads when planning and can add to.</td></tr>
+              <tr><td>Settings</td><td>Research sources, website policy, and coding options.</td></tr>
+            </table>
+          </div>
+          <div class="note">
+            <div><strong>Research sources.</strong> Web search, multi-source paper search (arXiv, Semantic Scholar, OpenAlex, Crossref), and arXiv figure extraction can each be turned on or off. The app applies the website policy (academic-only, custom list, or open) to every page fetch. The search tools run through <code>uvx</code>, so they need <code>uv</code> installed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= CLI -->
+  <section id="cli">
+    <div class="wrap">
+      <div class="head">
+        <div class="kicker">Headless</div>
+        <h2>Command line</h2>
+        <p class="sub">You can use every feature without the desktop app. The wheel installs the CLI agent, the backend service, the MCP servers, and the facility sign-in commands. They share the same projects under <span class="path">~/hep-genesis/</span>.</p>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="CLI topics">
+        <button role="tab" aria-selected="true" aria-controls="t-run" id="tb-run">Run the agent</button>
+        <button role="tab" aria-selected="false" aria-controls="t-proj" id="tb-proj">Projects &amp; code</button>
+        <button role="tab" aria-selected="false" aria-controls="t-auth" id="tb-auth">Facility sign-in</button>
+        <button role="tab" aria-selected="false" aria-controls="t-ref" id="tb-ref">All commands</button>
+      </div>
+
+      <div role="tabpanel" id="t-run" aria-labelledby="tb-run">
+        <div class="grid g2">
+          <div>
+            <p class="sub" style="font-size:15px">Set the model endpoint with environment variables. Any OpenAI-compatible API works. You can also set a different model for each stage with <code>LLM_PLANNER_*</code>, <code>LLM_WORKER_*</code>, and <code>LLM_SYNTHESIS_*</code>.</p>
+            <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>export LLM_URL=https://your-gateway/v1
+<span class="p">$ </span>export LLM_MODEL=your-model
+<span class="p">$ </span>export LLM_API_KEY=...</pre></div>
+          </div>
+          <div>
+            <p class="sub" style="font-size:15px">Pass a question, a project, and one or more MCP servers. The project is created if it doesn't exist. When the run finishes, the report is printed and the outputs stay in the project directory.</p>
+            <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>hep-genesis-agent "compute a test power spectrum" \
+    --project qcd-eos \
+    --servers module:hep_genesis.domain.mcp_server \
+    --servers "command:uvx duckduckgo-mcp-server"</pre></div>
+          </div>
+        </div>
+        <div class="note" style="margin-top:20px"><div><strong>Server specs.</strong> <code>module:&lt;python.module&gt;</code> runs an installed module. <code>command:&lt;exe args…&gt;</code> runs an executable. A local path or a git URL is pip-installed first and then run. You can repeat <code>--servers</code>.</div></div>
+      </div>
+
+      <div role="tabpanel" id="t-proj" aria-labelledby="tb-proj" hidden>
+        <div class="grid g2">
+          <div>
+            <p class="sub" style="font-size:15px">Projects live in <span class="path">~/hep-genesis/projects</span>, or in <code>HEP_PROJECTS_DIR</code> if you set it. Use <code>--resume</code> to pick up an interrupted run of the same query.</p>
+            <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>hep-genesis-agent --list-projects
+<span class="p">$ </span>hep-genesis-agent "…same query…" --project qcd-eos --resume</pre></div>
+          </div>
+          <div>
+            <p class="sub" style="font-size:15px">To let the agent write and run code, link a codebase and add <code>--coding</code>. You approve each coding task at a prompt, and all code is saved under the project. A local folder is linked in place. A git URL is cloned at a fixed commit.</p>
+            <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>hep-genesis-agent --project qcd-eos \
+    --link-codebase ~/code/my-analysis
+<span class="p">$ </span>hep-genesis-agent "fit the slope of the downloaded HMF" \
+    --project qcd-eos --coding \
+    --servers module:hep_genesis.domain.mcp_server</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div role="tabpanel" id="t-auth" aria-labelledby="tb-auth" hidden>
+        <div class="grid g2">
+          <div>
+            <p class="sub" style="font-size:15px">Each facility needs two sign-ins: one for the IRI API (jobs) and one for Globus Transfer (data). Each command prints a Globus URL and asks you to paste back the code. Tokens are stored in <span class="path">~/.globus/</span> and refresh automatically.</p>
+            <div class="code"><button class="copy" type="button">Copy</button><pre><span class="c"># ALCF (Polaris)</span>
+<span class="p">$ </span>hep-genesis-alcf-auth
+<span class="p">$ </span>hep-genesis-alcf-transfer-auth
+<span class="c"># NERSC (Perlmutter)</span>
+<span class="p">$ </span>hep-genesis-nersc-auth
+<span class="p">$ </span>hep-genesis-nersc-transfer-auth</pre></div>
+          </div>
+          <div>
+            <p class="sub" style="font-size:15px">Facility sessions expire under each site's policy. For example, ALCF MFA lasts about 24 hours. When a session expires, dispatch reports the exact re-auth command to run. The desktop HPC panel uses the same flows and tokens.</p>
+            <div class="code"><button class="copy" type="button">Copy</button><pre><span class="c"># ALCF inference gateway (ALCF-FIRST model endpoint)</span>
+<span class="p">$ </span>hep-genesis-alcf-inference-auth</pre></div>
+          </div>
+        </div>
+      </div>
+
+      <div role="tabpanel" id="t-ref" aria-labelledby="tb-ref" hidden>
+        <div class="dl-wrap">
+          <table class="cmds">
+            <tr><td>hep-genesis-agent</td><td>Headless agent runner, the CLI version of the app's chat. Run it with <code>--help</code> to see the options.</td></tr>
+            <tr><td>hep-genesis-service</td><td>The backend service (FastAPI) that the desktop app starts. It handles auth flows, config, and the job store.</td></tr>
+            <tr><td>hep-genesis-domain</td><td>General-purpose science MCP server: session datasets, arXiv and paper figures, and dispatchable jobs.</td></tr>
+            <tr><td>hep-genesis-alcf</td><td>MCP server for the ALCF facility API (IRI).</td></tr>
+            <tr><td>hep-genesis-nersc</td><td>MCP server for the NERSC facility API (IRI).</td></tr>
+            <tr><td>hep-genesis-alcf-auth</td><td>ALCF IRI sign-in.</td></tr>
+            <tr><td>hep-genesis-alcf-transfer-auth</td><td>Globus Transfer sign-in for ALCF data movement.</td></tr>
+            <tr><td>hep-genesis-alcf-inference-auth</td><td>Sign-in for the ALCF inference gateway.</td></tr>
+            <tr><td>hep-genesis-nersc-auth</td><td>NERSC IRI sign-in.</td></tr>
+            <tr><td>hep-genesis-nersc-transfer-auth</td><td>Globus Transfer sign-in for NERSC data movement.</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================= HPC -->
+  <section id="hpc">
+    <div class="wrap">
+      <div class="head">
+        <div class="kicker">Facility compute</div>
+        <h2>How a dispatched run works</h2>
+        <p class="sub">When the target is Polaris or Perlmutter, the agent calls the same MCP tool it would call locally. The backend's <code>set_dispatch</code> tool sends the call through the steps below. Jobs keep running if you quit the app, and the backend picks up polling again when it restarts.</p>
+      </div>
+
+      <div class="flow">
+        <div class="st"><div class="dotn"></div><h3>Stage</h3><p>Inputs go to the facility over Globus Transfer. NERSC can also stage through the IRI filesystem API.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Submit</h3><p>The job is submitted through the facility's IRI API to PBS on Polaris or Slurm on Perlmutter.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Poll</h3><p>The backend tracks job state. The Jobs list shows live logs.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Read back</h3><p>Logs and results are read over IRI, so an expired Globus session can't hide a failure.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Results</h3><p>Datasets are registered with the tool server, and artifacts are copied into your project.</p></div>
+      </div>
+
+      <div class="card arch" style="margin-top:36px;padding:26px">
+        <svg viewBox="0 0 960 250" role="img" aria-label="Architecture: desktop app and CLI talk to the Python backend; both reach MCP servers; the backend reaches ALCF and NERSC through IRI and Globus.">
+          <style>
+            .bx{fill:#f2f0ea;stroke:#c2bfb5}
+            .bx2{fill:#fdfcf9;stroke:#a96b0e}
+            .tt{font:600 14px 'IBM Plex Sans',system-ui,sans-serif;fill:#26292e}
+            .ts{font:12.5px 'IBM Plex Sans',system-ui,sans-serif;fill:#5d6570}
+            .tm{font:11.5px 'IBM Plex Mono',ui-monospace,monospace;fill:#8a5709}
+            .ln{stroke:#8b919b;stroke-width:1.2;fill:none}
+          </style>
+          <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#8b919b"/></marker></defs>
+
+          <rect class="bx" x="10" y="20" width="250" height="92" rx="10"/>
+          <text class="tt" x="30" y="50">Desktop app</text>
+          <text class="ts" x="30" y="72">Electron + React</text>
+          <text class="ts" x="30" y="92">chat · servers · HPC · jobs</text>
+
+          <rect class="bx" x="10" y="140" width="250" height="92" rx="10"/>
+          <text class="tt" x="30" y="170">CLI</text>
+          <text class="tm" x="30" y="192">hep-genesis-agent</text>
+          <text class="ts" x="30" y="212">LangGraph agent, headless</text>
+
+          <rect class="bx2" x="355" y="60" width="250" height="132" rx="10"/>
+          <text class="tt" x="375" y="90">Python backend</text>
+          <text class="tm" x="375" y="112">hep-genesis-service</text>
+          <text class="ts" x="375" y="136">facility auth · config</text>
+          <text class="ts" x="375" y="156">dispatch · job store</text>
+          <text class="ts" x="375" y="176">projects · provenance</text>
+
+          <rect class="bx" x="700" y="20" width="250" height="92" rx="10"/>
+          <text class="tt" x="720" y="50">MCP servers</text>
+          <text class="ts" x="720" y="72">stdio or streamable-HTTP</text>
+          <text class="ts" x="720" y="92">hosted · domain · your own</text>
+
+          <rect class="bx" x="700" y="140" width="250" height="92" rx="10"/>
+          <text class="tt" x="720" y="170">DOE facilities</text>
+          <text class="ts" x="720" y="192">ALCF Polaris (PBS)</text>
+          <text class="ts" x="720" y="212">NERSC Perlmutter (Slurm)</text>
+
+          <path class="ln" d="M260 80 H300 Q310 80 310 90 V110 Q310 120 320 120 H352" marker-end="url(#ah)"/>
+          <text class="tm" x="266" y="72">REST · SSE</text>
+          <path class="ln" d="M260 186 H352" marker-end="url(#ah)"/>
+          <path class="ln" d="M605 90 H650 Q660 90 660 80 V76 Q660 66 670 66 H697" marker-end="url(#ah)"/>
+          <text class="tm" x="612" y="58">MCP</text>
+          <path class="ln" d="M605 166 H650 Q660 166 660 176 V176 Q660 186 670 186 H697" marker-end="url(#ah)"/>
+          <text class="tm" x="612" y="208">IRI · Globus</text>
+        </svg>
+      </div>
+      <p class="meta-line">Dispatch has been tested end to end on Polaris and Perlmutter. Other DOE facilities are not supported yet.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a class="brand" href="#top" style="font-size:14px"><svg style="width:20px;height:20px"><use href="#logo"/></svg>HEP-Genesis-Agent</a>
+      <p style="margin-top:8px;max-width:52ch">Built by <a href="https://github.com/HEP-KE">HEP-KE</a>. MIT licensed. The backend is derived from <a href="https://github.com/HEP-KE/ke_genesis_agent">ke_genesis_agent</a>. During the alpha, send issues directly to the maintainers.</p>
+    </div>
+    <div class="links">
+      <a href="https://github.com/HEP-KE/hep-genesis-releases/releases">Releases</a>
+      <a href="https://github.com/HEP-KE/hep-genesis-releases">Repository</a>
+      <a href="mcp-client-metadata.json">OAuth client metadata</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  // Tabs
+  var tabs = document.querySelectorAll('.tabs [role=tab]');
+  tabs.forEach(function (t) {
+    t.addEventListener('click', function () {
+      tabs.forEach(function (o) {
+        var on = o === t;
+        o.setAttribute('aria-selected', on);
+        document.getElementById(o.getAttribute('aria-controls')).hidden = !on;
+      });
+    });
+  });
+
+  // Copy buttons (strip prompt markers)
+  document.querySelectorAll('.copy').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var pre = b.parentNode.querySelector('pre').cloneNode(true);
+      pre.querySelectorAll('.p').forEach(function (p) { p.remove(); });
+      var txt = pre.textContent.split('\n').filter(function (l) { return l.trim().charAt(0) !== '#'; }).join('\n');
+      var done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy'; }, 1400); };
+      try { navigator.clipboard.writeText(txt).then(done, function () {}); } catch (e) {}
+    });
+  });
+
+  // Latest release: fill in real asset links. Static fallbacks point at
+  // /releases/latest, so the page still works if the API is unreachable.
+  var REPO = 'HEP-KE/hep-genesis-releases';
+  function set(id, prop, val) { var el = document.getElementById(id); if (el) el[prop] = val; }
+  function available(sId, cId, assets) {
+    set(sId, 'innerHTML', '<span class="tag ok">available</span>');
+    set(cId, 'innerHTML', assets.map(function (a) {
+      return '<a class="dl-link" href="' + a.browser_download_url + '"><svg><use href="#i-dl"/></svg>' + a.name.split('.').pop() + '</a>';
+    }).join(' &nbsp; '));
+  }
+  fetch('https://api.github.com/repos/' + REPO + '/releases/latest', { headers: { Accept: 'application/vnd.github+json' } })
+    .then(function (r) { return r.ok ? r.json() : Promise.reject(r.status); })
+    .then(function (rel) {
+      var A = rel.assets || [];
+      var find = function (re) { return A.filter(function (a) { return re.test(a.name); }); };
+      var dmg = find(/\.dmg$/i)[0], whl = find(/\.whl$/i)[0];
+      var exe = find(/\.exe$/i), lin = find(/\.(AppImage|deb)$/i);
+      var tag = rel.tag_name || '';
+      if (tag) {
+        set('ver-eyebrow', 'textContent', 'Alpha · ' + tag);
+        set('hero-dmg-ver', 'textContent', tag + ' · Apple silicon');
+      }
+      if (rel.published_at) {
+        var d = new Date(rel.published_at);
+        set('rel-date', 'textContent', ' (' + tag + ', ' + d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) + ')');
+      }
+      if (dmg) {
+        set('hero-dmg', 'href', dmg.browser_download_url);
+        set('l-dmg', 'href', dmg.browser_download_url);
+        set('f-dmg', 'textContent', dmg.name);
+      }
+      if (whl) {
+        set('l-whl', 'href', whl.browser_download_url);
+        set('f-whl', 'textContent', whl.name);
+        set('whl-name', 'textContent', whl.name);
+      }
+      if (exe.length) { set('f-exe', 'textContent', exe.map(function (a) { return a.name; }).join(' · ')); available('s-exe', 'c-exe', exe); }
+      if (lin.length) { set('f-lin', 'textContent', lin.map(function (a) { return a.name; }).join(' · ')); available('s-lin', 'c-lin', lin); }
+    })
+    .catch(function () { /* keep static fallbacks */ });
+})();
+</script>
+</body>
+</html>
