@@ -137,86 +137,14 @@ h1 em { font-style: italic; color: var(--accent-text); }
 .btn small { font-weight: 400; opacity: .8; font-size: 12.5px; font-family: var(--font-mono); }
 .meta-line { font-size: 13px; color: var(--text-faint); margin-top: 14px; font-family: var(--font-mono); }
 
-/* ------------------------------------------------------------ app mockup */
+/* ------------------------------------------------------------ screenshot */
 .shot { margin-top: 56px; }
-.window {
-  border-radius: 12px;
-  border: 1px solid var(--line);
-  background: var(--bg0);
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
+.shot img {
+  display: block; width: 100%; height: auto; margin: 0 auto;
+  border-radius: 12px; border: 1px solid var(--line);
+  box-shadow: var(--shadow-lg); background: var(--bg1);
 }
-.window-bar {
-  height: 34px; display: flex; align-items: center; gap: 7px; padding: 0 14px;
-  background: var(--bg1); border-bottom: 1px solid var(--line-soft);
-}
-.window-bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--bg3); display: block; }
-.window-bar span { margin-left: 10px; font-size: 12px; color: var(--text-faint); }
-.window-body { display: grid; grid-template-columns: 76px minmax(0,1fr) 300px; min-height: 440px; }
-.rail {
-  background: var(--bg1); border-right: 1px solid var(--line-soft);
-  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 14px 0;
-}
-.rail .logo { width: 30px; height: 30px; margin-bottom: 14px; }
-.rail b {
-  width: 60px; padding: 8px 0 6px; border-radius: var(--radius-sm);
-  display: flex; flex-direction: column; align-items: center; gap: 3px;
-  font-size: 10px; font-weight: 400; color: var(--text-faint);
-}
-.rail b svg { width: 18px; height: 18px; }
-.rail b.on { color: var(--accent-text); background: var(--accent-soft); }
-.chat { padding: 22px 26px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.bubble-user {
-  align-self: flex-end; max-width: 78%;
-  background: var(--bg2); border: 1px solid var(--line-soft);
-  padding: 9px 13px; border-radius: 12px 12px 3px 12px; font-size: 13.5px;
-}
-.plan {
-  background: var(--bg1); border: 1px solid var(--line-soft); border-radius: var(--radius);
-  padding: 12px 14px; font-size: 13px;
-}
-.plan h4 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; margin-bottom: 8px; }
-.plan li { list-style: none; display: flex; gap: 9px; align-items: baseline; padding: 2px 0; color: var(--text-dim); }
-.plan li::before { content: ''; width: 10px; height: 10px; border-radius: 3px; border: 1.5px solid var(--line); flex-shrink: 0; transform: translateY(1px); }
-.plan li.done { color: var(--text); }
-.plan li.done::before { background: var(--ok); border-color: var(--ok); }
-.plan li.run::before { border-color: var(--accent); background: var(--accent-soft); }
-.plan ul { padding: 0; }
-.tool {
-  font-family: var(--font-mono); font-size: 12px;
-  background: var(--bg2); border: 1px solid var(--line-soft); border-left: 3px solid var(--accent);
-  border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text-dim);
-  overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
-}
-.tool b { color: var(--text); font-weight: 500; }
-.composer {
-  margin-top: auto; border: 1px solid var(--line); background: var(--bg2); border-radius: 12px;
-  padding: 10px 12px; display: flex; flex-direction: column; gap: 10px;
-}
-.composer .ph { color: var(--text-faint); font-size: 13.5px; }
-.composer .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; font-size: 12px; }
-.seg span { padding: 3px 10px; color: var(--text-dim); }
-.seg span.on { background: var(--text); color: var(--bg2); }
-.pill { font-size: 12px; border: 1px solid var(--line); border-radius: 7px; padding: 3px 10px; color: var(--text-dim); display: inline-flex; gap: 6px; align-items: center; }
-.pill .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
-.side { border-left: 1px solid var(--line-soft); background: var(--bg1); padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-.side h5 { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
-.paper {
-  background: var(--paper); color: var(--paper-ink); border: 1px solid var(--line-soft); border-radius: 4px;
-  padding: 16px 16px 18px; font-family: var(--font-serif); box-shadow: var(--shadow);
-}
-.paper .t { font-size: 15px; font-weight: 500; line-height: 1.25; }
-.paper .a { font-size: 11px; font-style: italic; color: #6b675e; margin: 4px 0 10px; }
-.paper .ln { height: 5px; background: #e7e3da; border-radius: 2px; margin: 6px 0; }
-.paper svg { width: 100%; height: 74px; margin: 8px 0 2px; display: block; }
-.paper .cap { font-size: 10px; color: #6b675e; }
-.job { font-family: var(--font-mono); font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; color: var(--text-dim); padding: 7px 10px; border: 1px solid var(--line-soft); border-radius: var(--radius-sm); background: var(--bg2); }
-.job .ok { color: var(--ok); }
 .shot-caption { font-size: 12.5px; color: var(--text-faint); text-align: center; margin-top: 14px; }
-@media (max-width: 900px) { .window-body { grid-template-columns: 64px minmax(0,1fr); } .side { display: none; } .rail b { width: 52px; } }
-@media (max-width: 520px) { .window-body { grid-template-columns: minmax(0,1fr); }
-  .btn small { display: none; } .bubble-user { max-width: 92%; } .rail { display: none; } .chat { padding: 16px; } }
 
 /* --------------------------------------------------------------- sections */
 section { padding: 80px 0; border-top: 1px solid var(--line-soft); }
@@ -391,11 +319,11 @@ footer a { color: var(--text-dim); }
   <!-- ============================================================ hero -->
   <div class="wrap hero">
     <span class="eyebrow"><span class="dot"></span><span id="ver-eyebrow">Alpha release</span></span>
-    <h1>An agent for scientific computing, <em>on your laptop or on HPC</em>.</h1>
+    <h1>An agentic client for physics, <em>powered by High-Performance computing, MCP servers, and custom LLM backends</em>.</h1>
     <p class="lede">
-      HEP-Genesis-Agent is a desktop and command-line client. A chat agent calls
+      HEP-Genesis-Agent is a desktop application and command-line client. A chat agent calls
       tools on MCP servers and runs compute either on your machine or on DOE
-      facilities (ALCF Polaris, NERSC Perlmutter) through IRI and Globus.
+      facilities (ALCF Polaris, NERSC Perlmutter) through IRI-API and Globus Transfer. The multi-agent system allows for different LLM endpoints at different stages.
     </p>
     <div class="actions">
       <a class="btn primary" id="hero-dmg" href="https://github.com/HEP-KE/hep-genesis-releases/releases/latest">
@@ -405,62 +333,11 @@ footer a { color: var(--text-dim); }
       </a>
       <a class="btn" href="#install">Other platforms &amp; the Python backend</a>
     </div>
-    <p class="meta-line" id="hero-meta">Free · MIT licensed · unsigned alpha build</p>
+    <p class="meta-line" id="hero-meta">Free · MIT licensed ·  alpha build</p>
 
-    <figure class="shot" aria-label="Illustration of the desktop app">
-      <div class="window">
-        <div class="window-bar"><i></i><i></i><i></i><span>HEP-Genesis-Agent</span></div>
-        <div class="window-body">
-          <div class="rail" aria-hidden="true">
-            <svg class="logo"><use href="#logo"/></svg>
-            <b class="on"><svg><use href="#i-chat"/></svg>Chat</b>
-            <b><svg><use href="#i-model"/></svg>Models</b>
-            <b><svg><use href="#i-server"/></svg>Servers</b>
-            <b><svg><use href="#i-hpc"/></svg>HPC</b>
-            <b><svg><use href="#i-skill"/></svg>Skills</b>
-            <b><svg><use href="#i-mem"/></svg>Memory</b>
-            <b><svg><use href="#i-gear"/></svg>Settings</b>
-          </div>
-          <div class="chat">
-            <div class="bubble-user">Compute a linear matter power spectrum for Planck 2018 parameters and compare it with a 5% higher σ₈.</div>
-            <div class="plan">
-              <h4>Plan · Research mode</h4>
-              <ul>
-                <li class="done">Build the k-grid for the theory spectrum</li>
-                <li class="done">Compute the baseline P(k) on Polaris</li>
-                <li class="run">Compute the σ₈ variant and the ratio</li>
-                <li>Write the report with figures</li>
-              </ul>
-            </div>
-            <div class="tool"><b>compute_power_spectrum</b> · target=polaris · job 7550816 · staged 9 files over Globus</div>
-            <div class="composer">
-              <span class="ph">Ask a follow-up…</span>
-              <div class="row">
-                <span class="seg"><span>Quick</span><span class="on">Research</span></span>
-                <span class="pill"><span class="dot"></span>Polaris</span>
-              </div>
-            </div>
-          </div>
-          <aside class="side" aria-hidden="true">
-            <h5>Report</h5>
-            <div class="paper">
-              <div class="t">Sensitivity of P(k) to σ₈</div>
-              <div class="a">generated report · 2 figures</div>
-              <div class="ln" style="width:94%"></div><div class="ln" style="width:88%"></div><div class="ln" style="width:70%"></div>
-              <svg viewBox="0 0 200 74" preserveAspectRatio="none">
-                <path d="M4 6v64h192" fill="none" stroke="#b9b4a8" stroke-width="1"/>
-                <path d="M6 62C30 58 48 40 70 26s36-14 52-8 40 22 72 36" fill="none" stroke="#23211d" stroke-width="1.4"/>
-                <path d="M6 60C30 55 48 35 70 20s36-14 52-8 40 20 72 34" fill="none" stroke="#a96b0e" stroke-width="1.4" stroke-dasharray="4 3"/>
-              </svg>
-              <div class="cap">Figure 1. Linear P(k), baseline and σ₈ variant.</div>
-            </div>
-            <h5>Jobs</h5>
-            <div class="job"><span>polaris · 7550816</span><span class="ok">done</span></div>
-            <div class="job"><span>polaris · 7550842</span><span>running</span></div>
-          </aside>
-        </div>
-      </div>
-      <figcaption class="shot-caption">Illustration of the app's layout. The prompt, plan, and jobs are examples.</figcaption>
+    <figure class="shot">
+      <img src="assets/app-screenshot.png" width="1195" height="1050" alt="The HEP-Genesis-Agent desktop app: navigation rail, chat history, a Quick-mode conversation computing an f(R) gravity matter power spectrum with an inline comparison figure, and the activity panel listing the tool calls.">
+      <figcaption class="shot-caption">Sample run: four tool calls on a local MCP server, and the resulting figure rendered inline.</figcaption>
     </figure>
   </div>
 
@@ -622,7 +499,7 @@ footer a { color: var(--text-dim); }
             </table>
           </div>
           <div class="note">
-            <div><strong>Research sources.</strong> Web search, multi-source paper search (arXiv, Semantic Scholar, OpenAlex, Crossref), and arXiv figure extraction can each be turned on or off. The app applies the website policy (academic-only, custom list, or open) to every page fetch. The search tools run through <code>uvx</code>, so they need <code>uv</code> installed.</div>
+            <div><strong>Research sources.</strong> Web search, multi-source paper search (arXiv, Semantic Scholar, OpenAlex, Crossref), and arXiv figure extraction can each be turned on or off. The app applies the website policy to every page fetch. The search tools run through <code>uvx</code>, so they need <code>uv</code> installed.</div>
           </div>
         </div>
       </div>
