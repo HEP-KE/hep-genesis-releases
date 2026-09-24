@@ -114,7 +114,7 @@ h1 {
   line-height: 1.08;
   letter-spacing: -.012em;
   margin: 22px 0 18px;
-  max-width: 17ch;
+  max-width: 24em;
 }
 h1 em { font-style: italic; color: var(--accent-text); }
 .lede { font-size: 18px; color: var(--text-dim); max-width: 60ch; }
@@ -319,25 +319,21 @@ footer a { color: var(--text-dim); }
   <!-- ============================================================ hero -->
   <div class="wrap hero">
     <span class="eyebrow"><span class="dot"></span><span id="ver-eyebrow">Alpha release</span></span>
-    <h1>An agentic client for physics, <em>powered by High-Performance computing, MCP servers, and custom LLM backends</em>.</h1>
-    <p class="lede">
-      HEP-Genesis-Agent is a desktop application and command-line client. A chat agent calls
-      tools on MCP servers and runs compute either on your machine or on DOE
-      facilities (ALCF Polaris, NERSC Perlmutter) through IRI-API and Globus Transfer. The multi-agent system allows for different LLM endpoints at different stages.
-    </p>
+    <h1>An agentic client for physics,<br> <em>with HPC, MCP servers, and custom LLM endpoints</em>.</h1>
+    <p class="lede">HEP-Genesis-Agent is a desktop application and command-line client with native support to numerous science tools and skills. Compute locally or on DOE-HPC facilities. Customizable LLM endpoints at different stages of analysis.</p>
     <div class="actions">
       <a class="btn primary" id="hero-dmg" href="https://github.com/HEP-KE/hep-genesis-releases/releases/latest">
         <svg><use href="#i-apple"/></svg>
         <span>Download for macOS</span>
         <small id="hero-dmg-ver">Apple silicon</small>
       </a>
-      <a class="btn" href="#install">Other platforms &amp; the Python backend</a>
+      <a class="btn" href="#install">Other platforms</a>
     </div>
-    <p class="meta-line" id="hero-meta">Free · MIT licensed ·  alpha build</p>
+    <p class="meta-line" id="hero-meta">Free · MIT licensed · alpha build</p>
 
     <figure class="shot">
       <img src="assets/app-screenshot.png" width="1195" height="1050" alt="The HEP-Genesis-Agent desktop app: navigation rail, chat history, a Quick-mode conversation computing an f(R) gravity matter power spectrum with an inline comparison figure, and the activity panel listing the tool calls.">
-      <figcaption class="shot-caption">Sample run: four tool calls on a local MCP server, and the resulting figure rendered inline.</figcaption>
+      <figcaption class="shot-caption">A Quick-mode run: four tool calls on a local MCP server and the resulting figure.</figcaption>
     </figure>
   </div>
 
@@ -347,38 +343,38 @@ footer a { color: var(--text-dim); }
       <div class="head">
         <div class="kicker">Overview</div>
         <h2>What it does</h2>
-        <p class="sub">One client for model endpoints, MCP tool servers, and facility compute. The desktop app and the CLI share the same backend, projects, skills, and memory.</p>
+        <p class="sub">The desktop app and the CLI share one backend, so projects, skills, and memory carry over.</p>
       </div>
       <div class="grid g3">
         <div class="card">
           <div class="ic"><svg><use href="#i-chat"/></svg></div>
           <h3>Two chat modes</h3>
-          <p><em>Quick</em>: one agent calls tools directly. <em>Research</em>: a lead agent writes a plan, a worker runs it step by step, and the run ends in a written report. The app shows a live graph of the running agent.</p>
+          <p><em>Quick</em> calls tools directly. <em>Research</em> plans, runs each step, and ends with a written report.</p>
         </div>
         <div class="card">
           <div class="ic"><svg><use href="#i-server"/></svg></div>
           <h3>MCP servers</h3>
-          <p>Connect stdio and streamable-HTTP servers, including hosted HEP-KE servers and their OAuth sign-in. Each server shows its tool list and logs.</p>
+          <p>Connect local (stdio) or hosted (HTTP) servers, including HEP-KE servers with OAuth sign-in.</p>
         </div>
         <div class="card">
           <div class="ic"><svg><use href="#i-hpc"/></svg></div>
           <h3>Local or HPC</h3>
-          <p>A target picker sends the same tool call to your machine, to Polaris (PBS), or to Perlmutter (Slurm). Staging goes over Globus Transfer, and job results come back to your laptop.</p>
+          <p>Send the same tool call to your machine, Polaris, or Perlmutter. Results come back to your laptop.</p>
         </div>
         <div class="card">
           <div class="ic"><svg><use href="#i-doc"/></svg></div>
           <h3>Figures and reports</h3>
-          <p>Plots from tools appear inline as numbered figures with captions, and CSV files open as tables. Research reports are set like a preprint, and you can export them to PDF with all figures embedded.</p>
+          <p>Plots appear inline with captions. Reports are set like a preprint and export to PDF.</p>
         </div>
         <div class="card">
           <div class="ic"><svg><use href="#i-model"/></svg></div>
-          <h3>Any OpenAI-compatible model</h3>
-          <p>Enter a base URL, a key, and a model name, plus extra headers if your lab gateway needs them. Presets cover common providers and ALCF's inference gateway. The app encrypts keys with the OS keychain.</p>
+          <h3>Your own LLMs</h3>
+          <p>Any OpenAI-compatible endpoint, including lab gateways. You can use a different model for each stage.</p>
         </div>
         <div class="card">
           <div class="ic"><svg><use href="#i-folder"/></svg></div>
           <h3>Projects and provenance</h3>
-          <p>Each project directory collects run outputs, dispatched-job artifacts, resume state, and provenance. You can link existing codebases so optional coding tasks can build on them.</p>
+          <p>Each project keeps its outputs, job artifacts, and provenance. Link a codebase for coding tasks.</p>
         </div>
       </div>
     </div>
@@ -390,7 +386,7 @@ footer a { color: var(--text-dim); }
       <div class="head">
         <div class="kicker">Install</div>
         <h2>Downloads</h2>
-        <p class="sub">Builds are published on <a href="https://github.com/HEP-KE/hep-genesis-releases/releases">GitHub Releases</a>. The links below always point to the latest release<span id="rel-date"></span>.</p>
+        <p class="sub">Latest release<span id="rel-date"></span>. Older builds are on <a href="https://github.com/HEP-KE/hep-genesis-releases/releases">GitHub Releases</a>.</p>
       </div>
 
       <div class="dl-wrap">
@@ -424,46 +420,45 @@ footer a { color: var(--text-dim); }
           </tbody>
         </table>
       </div>
-      <p class="meta-line">You can still run the Python backend and CLI on Linux and Windows. Installing the wheel works on any platform with Python ≥ 3.10.</p>
+      <p class="meta-line">The Python backend and CLI run on any platform with Python ≥ 3.10.</p>
 
       <div class="grid g2 tiers">
         <div class="card tier">
           <div class="n">Option 1 · app only</div>
           <h3>Chat and hosted tools</h3>
-          <p>Most users only need the app. You don't need Python for:</p>
+          <p>Most users only need the DMG. No Python required.</p>
           <ul>
-            <li>chat with Quick and Research runs, plus reports and PDF export</li>
-            <li>hosted MCP servers and their OAuth sign-in</li>
-            <li>projects, skills, and memory</li>
-            <li>coding tasks, since the harness ships inside the DMG</li>
+            <li>chat, research runs, and PDF reports</li>
+            <li>hosted MCP servers</li>
+            <li>projects, skills, memory, and coding tasks</li>
           </ul>
         </div>
         <div class="card tier">
           <div class="n">Option 2 · app + backend</div>
           <h3>Local science servers and HPC dispatch</h3>
-          <p>Install the wheel as well if you need:</p>
+          <p>Add the Python wheel for:</p>
           <ul>
-            <li>bundled stdio MCP servers (<code>hep-genesis-domain</code> and the facility servers)</li>
-            <li>facility sign-in, job tracking, and Polaris or Perlmutter dispatch</li>
-            <li>the headless <code>hep-genesis-agent</code> CLI</li>
+            <li>bundled local MCP servers</li>
+            <li>Polaris and Perlmutter dispatch</li>
+            <li>the <code>hep-genesis-agent</code> CLI</li>
           </ul>
-          <p style="margin-top:10px">HPC dispatch also requires a facility account with an allocation and <a href="https://www.globus.org/globus-connect-personal">Globus Connect Personal</a>.</p>
+          <p style="margin-top:10px">HPC runs also need a facility allocation and <a href="https://www.globus.org/globus-connect-personal">Globus Connect Personal</a>.</p>
         </div>
       </div>
 
       <div class="grid g2" style="margin-top:16px">
         <div class="card">
           <h3>macOS app</h3>
-          <p>Open the DMG and drag the app into <span class="path">/Applications</span>. Alpha builds are not signed yet, so macOS may report that the app “is damaged and can't be opened”. The app isn't damaged: macOS shows this message for any unsigned app downloaded in a browser. Run this command once, then open the app normally:</p>
+          <p>Drag the app into <span class="path">/Applications</span>. Alpha builds are unsigned, so macOS may say the app “is damaged”. It isn't. Run this once:</p>
           <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"</pre></div>
         </div>
         <div class="card">
           <h3>Python backend</h3>
-          <p>Install the wheel into a dedicated Python ≥ 3.10 environment. The <code>[all]</code> extra adds the agent, service, and HPC dependencies. Replace the filename with the one you downloaded.</p>
+          <p>Install the wheel into a fresh Python ≥ 3.10 environment:</p>
           <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>conda create -n hep-genesis python=3.12 -y
 <span class="p">$ </span>conda activate hep-genesis
 <span class="p">$ </span>pip install '<span id="whl-name">hep_genesis-&lt;version&gt;-py3-none-any.whl</span>[all]'</pre></div>
-          <p style="margin-top:10px">When the app starts for the first time, it looks for conda environments that contain the backend. If it doesn't find yours, choose <em>HPC → Pick python</em> and select that environment's <code>python</code>.</p>
+          <p style="margin-top:10px">The app finds the environment automatically. If not, use <em>HPC → Pick python</em>.</p>
         </div>
       </div>
     </div>
@@ -475,31 +470,28 @@ footer a { color: var(--text-dim); }
       <div class="head">
         <div class="kicker">Using the app</div>
         <h2>The desktop app</h2>
-        <p class="sub">Each area of the app has its own tab in the navigation rail. On first launch, follow the steps below in order. After that, you'll mostly use Chat.</p>
+        <p class="sub">Four steps on first launch. After that, it's mostly Chat.</p>
       </div>
 
       <div class="grid g2" style="align-items:start">
         <div class="steps">
-          <div class="step"><div><h3>Add a model endpoint</h3><p><em>Models</em>: choose a preset or enter your gateway's base URL, API key, and model name. ALCF-FIRST only needs a Globus login.</p></div></div>
-          <div class="step"><div><h3>Connect servers</h3><p><em>Servers</em>: the hosted servers connect automatically. Add <code>hep-genesis-domain</code> for local science tools, or any other stdio or HTTP MCP server.</p></div></div>
-          <div class="step"><div><h3>Start the backend (optional)</h3><p><em>HPC</em>: choose the Python environment, start the backend, and sign in to ALCF or NERSC. Globus Connect Personal must be running.</p></div></div>
-          <div class="step"><div><h3>Chat</h3><p>Choose <em>Quick</em> or <em>Research</em> in the composer, and choose where compute runs: <em>On this machine</em>, <em>Polaris</em>, or <em>Perlmutter</em>.</p></div></div>
+          <div class="step"><div><h3>Add a model endpoint</h3><p>In <em>Models</em>, pick a preset or enter your gateway's URL and key.</p></div></div>
+          <div class="step"><div><h3>Connect servers</h3><p>Hosted servers connect automatically. Add your own in <em>Servers</em>.</p></div></div>
+          <div class="step"><div><h3>Start the backend (optional)</h3><p>For HPC, start the backend in <em>HPC</em> and sign in to ALCF or NERSC.</p></div></div>
+          <div class="step"><div><h3>Chat</h3><p>Pick <em>Quick</em> or <em>Research</em>, and where the compute runs.</p></div></div>
         </div>
 
         <div class="grid" style="gap:12px">
           <div class="card" style="padding:18px">
             <table class="cmds">
-              <tr><td>Chat</td><td>Conversations, plans, tool calls, inline figures, and reports.</td></tr>
-              <tr><td>Models</td><td>Model endpoints and presets. Keys are stored in the OS keychain.</td></tr>
-              <tr><td>Servers</td><td>Connect MCP servers and view their tools, logs, and OAuth login.</td></tr>
-              <tr><td>HPC</td><td>Backend, facility sign-in and token expiry, and a jobs list with live logs.</td></tr>
-              <tr><td>Skills</td><td>Agent recipes stored as editable <code>skills/*.md</code> files, plus read-only skills from servers.</td></tr>
-              <tr><td>Memory</td><td>Lessons from <code>MEMORY.md</code> that the agent reads when planning and can add to.</td></tr>
-              <tr><td>Settings</td><td>Research sources, website policy, and coding options.</td></tr>
+              <tr><td>Chat</td><td>Conversations, tool calls, figures, reports</td></tr>
+              <tr><td>Models</td><td>Endpoints and per-stage models</td></tr>
+              <tr><td>Servers</td><td>MCP servers, tools, logs</td></tr>
+              <tr><td>HPC</td><td>Facility sign-in and jobs</td></tr>
+              <tr><td>Skills</td><td>Reusable agent recipes</td></tr>
+              <tr><td>Memory</td><td>Lessons the agent keeps between runs</td></tr>
+              <tr><td>Settings</td><td>Web and paper search, coding</td></tr>
             </table>
-          </div>
-          <div class="note">
-            <div><strong>Research sources.</strong> Web search, multi-source paper search (arXiv, Semantic Scholar, OpenAlex, Crossref), and arXiv figure extraction can each be turned on or off. The app applies the website policy to every page fetch. The search tools run through <code>uvx</code>, so they need <code>uv</code> installed.</div>
           </div>
         </div>
       </div>
@@ -512,7 +504,7 @@ footer a { color: var(--text-dim); }
       <div class="head">
         <div class="kicker">Headless</div>
         <h2>Command line</h2>
-        <p class="sub">You can use every feature without the desktop app. The wheel installs the CLI agent, the backend service, the MCP servers, and the facility sign-in commands. They share the same projects under <span class="path">~/hep-genesis/</span>.</p>
+        <p class="sub">Everything works without the desktop app. The wheel installs the commands below.</p>
       </div>
 
       <div class="tabs" role="tablist" aria-label="CLI topics">
@@ -525,31 +517,31 @@ footer a { color: var(--text-dim); }
       <div role="tabpanel" id="t-run" aria-labelledby="tb-run">
         <div class="grid g2">
           <div>
-            <p class="sub" style="font-size:15px">Set the model endpoint with environment variables. Any OpenAI-compatible API works. You can also set a different model for each stage with <code>LLM_PLANNER_*</code>, <code>LLM_WORKER_*</code>, and <code>LLM_SYNTHESIS_*</code>.</p>
+            <p class="sub" style="font-size:15px">Point it at a model. Per-stage overrides use <code>LLM_PLANNER_*</code>, <code>LLM_WORKER_*</code>, and <code>LLM_SYNTHESIS_*</code>.</p>
             <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>export LLM_URL=https://your-gateway/v1
 <span class="p">$ </span>export LLM_MODEL=your-model
 <span class="p">$ </span>export LLM_API_KEY=...</pre></div>
           </div>
           <div>
-            <p class="sub" style="font-size:15px">Pass a question, a project, and one or more MCP servers. The project is created if it doesn't exist. When the run finishes, the report is printed and the outputs stay in the project directory.</p>
+            <p class="sub" style="font-size:15px">Ask a question. Outputs are saved to the project.</p>
             <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>hep-genesis-agent "compute a test power spectrum" \
     --project qcd-eos \
     --servers module:hep_genesis.domain.mcp_server \
     --servers "command:uvx duckduckgo-mcp-server"</pre></div>
           </div>
         </div>
-        <div class="note" style="margin-top:20px"><div><strong>Server specs.</strong> <code>module:&lt;python.module&gt;</code> runs an installed module. <code>command:&lt;exe args…&gt;</code> runs an executable. A local path or a git URL is pip-installed first and then run. You can repeat <code>--servers</code>.</div></div>
+        <p class="meta-line" style="margin-top:16px">--servers takes module:&lt;python.module&gt;, command:&lt;exe args&gt;, a local path, or a git URL.</p>
       </div>
 
       <div role="tabpanel" id="t-proj" aria-labelledby="tb-proj" hidden>
         <div class="grid g2">
           <div>
-            <p class="sub" style="font-size:15px">Projects live in <span class="path">~/hep-genesis/projects</span>, or in <code>HEP_PROJECTS_DIR</code> if you set it. Use <code>--resume</code> to pick up an interrupted run of the same query.</p>
+            <p class="sub" style="font-size:15px">Projects live in <span class="path">~/hep-genesis/projects</span>. <code>--resume</code> continues an interrupted run.</p>
             <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>hep-genesis-agent --list-projects
 <span class="p">$ </span>hep-genesis-agent "…same query…" --project qcd-eos --resume</pre></div>
           </div>
           <div>
-            <p class="sub" style="font-size:15px">To let the agent write and run code, link a codebase and add <code>--coding</code>. You approve each coding task at a prompt, and all code is saved under the project. A local folder is linked in place. A git URL is cloned at a fixed commit.</p>
+            <p class="sub" style="font-size:15px">Link a codebase and add <code>--coding</code>. You approve each coding task.</p>
             <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>hep-genesis-agent --project qcd-eos \
     --link-codebase ~/code/my-analysis
 <span class="p">$ </span>hep-genesis-agent "fit the slope of the downloaded HMF" \
@@ -562,7 +554,7 @@ footer a { color: var(--text-dim); }
       <div role="tabpanel" id="t-auth" aria-labelledby="tb-auth" hidden>
         <div class="grid g2">
           <div>
-            <p class="sub" style="font-size:15px">Each facility needs two sign-ins: one for the IRI API (jobs) and one for Globus Transfer (data). Each command prints a Globus URL and asks you to paste back the code. Tokens are stored in <span class="path">~/.globus/</span> and refresh automatically.</p>
+            <p class="sub" style="font-size:15px">Two sign-ins per facility: one for jobs, one for data transfer. Tokens refresh automatically.</p>
             <div class="code"><button class="copy" type="button">Copy</button><pre><span class="c"># ALCF (Polaris)</span>
 <span class="p">$ </span>hep-genesis-alcf-auth
 <span class="p">$ </span>hep-genesis-alcf-transfer-auth
@@ -571,7 +563,7 @@ footer a { color: var(--text-dim); }
 <span class="p">$ </span>hep-genesis-nersc-transfer-auth</pre></div>
           </div>
           <div>
-            <p class="sub" style="font-size:15px">Facility sessions expire under each site's policy. For example, ALCF MFA lasts about 24 hours. When a session expires, dispatch reports the exact re-auth command to run. The desktop HPC panel uses the same flows and tokens.</p>
+            <p class="sub" style="font-size:15px">For ALCF's hosted models, sign in once. When a session expires, the error names the command to re-run.</p>
             <div class="code"><button class="copy" type="button">Copy</button><pre><span class="c"># ALCF inference gateway (ALCF-FIRST model endpoint)</span>
 <span class="p">$ </span>hep-genesis-alcf-inference-auth</pre></div>
           </div>
@@ -581,16 +573,16 @@ footer a { color: var(--text-dim); }
       <div role="tabpanel" id="t-ref" aria-labelledby="tb-ref" hidden>
         <div class="dl-wrap">
           <table class="cmds">
-            <tr><td>hep-genesis-agent</td><td>Headless agent runner, the CLI version of the app's chat. Run it with <code>--help</code> to see the options.</td></tr>
-            <tr><td>hep-genesis-service</td><td>The backend service (FastAPI) that the desktop app starts. It handles auth flows, config, and the job store.</td></tr>
-            <tr><td>hep-genesis-domain</td><td>General-purpose science MCP server: session datasets, arXiv and paper figures, and dispatchable jobs.</td></tr>
-            <tr><td>hep-genesis-alcf</td><td>MCP server for the ALCF facility API (IRI).</td></tr>
-            <tr><td>hep-genesis-nersc</td><td>MCP server for the NERSC facility API (IRI).</td></tr>
-            <tr><td>hep-genesis-alcf-auth</td><td>ALCF IRI sign-in.</td></tr>
-            <tr><td>hep-genesis-alcf-transfer-auth</td><td>Globus Transfer sign-in for ALCF data movement.</td></tr>
-            <tr><td>hep-genesis-alcf-inference-auth</td><td>Sign-in for the ALCF inference gateway.</td></tr>
-            <tr><td>hep-genesis-nersc-auth</td><td>NERSC IRI sign-in.</td></tr>
-            <tr><td>hep-genesis-nersc-transfer-auth</td><td>Globus Transfer sign-in for NERSC data movement.</td></tr>
+            <tr><td>hep-genesis-agent</td><td>The agent, headless. See <code>--help</code>.</td></tr>
+            <tr><td>hep-genesis-service</td><td>Backend service used by the desktop app</td></tr>
+            <tr><td>hep-genesis-domain</td><td>Science MCP server: datasets, papers, jobs</td></tr>
+            <tr><td>hep-genesis-alcf</td><td>ALCF facility MCP server</td></tr>
+            <tr><td>hep-genesis-nersc</td><td>NERSC facility MCP server</td></tr>
+            <tr><td>hep-genesis-alcf-auth</td><td>ALCF sign-in (jobs)</td></tr>
+            <tr><td>hep-genesis-alcf-transfer-auth</td><td>ALCF sign-in (data)</td></tr>
+            <tr><td>hep-genesis-alcf-inference-auth</td><td>ALCF hosted models</td></tr>
+            <tr><td>hep-genesis-nersc-auth</td><td>NERSC sign-in (jobs)</td></tr>
+            <tr><td>hep-genesis-nersc-transfer-auth</td><td>NERSC sign-in (data)</td></tr>
           </table>
         </div>
       </div>
@@ -603,15 +595,15 @@ footer a { color: var(--text-dim); }
       <div class="head">
         <div class="kicker">Facility compute</div>
         <h2>How a dispatched run works</h2>
-        <p class="sub">When the target is Polaris or Perlmutter, the agent calls the same MCP tool it would call locally. The backend's <code>set_dispatch</code> tool sends the call through the steps below. Jobs keep running if you quit the app, and the backend picks up polling again when it restarts.</p>
+        <p class="sub">The agent calls the same tool it would run locally. Jobs keep running if you quit the app.</p>
       </div>
 
       <div class="flow">
-        <div class="st"><div class="dotn"></div><h3>Stage</h3><p>Inputs go to the facility over Globus Transfer. NERSC can also stage through the IRI filesystem API.</p></div>
-        <div class="st"><div class="dotn"></div><h3>Submit</h3><p>The job is submitted through the facility's IRI API to PBS on Polaris or Slurm on Perlmutter.</p></div>
-        <div class="st"><div class="dotn"></div><h3>Poll</h3><p>The backend tracks job state. The Jobs list shows live logs.</p></div>
-        <div class="st"><div class="dotn"></div><h3>Read back</h3><p>Logs and results are read over IRI, so an expired Globus session can't hide a failure.</p></div>
-        <div class="st"><div class="dotn"></div><h3>Results</h3><p>Datasets are registered with the tool server, and artifacts are copied into your project.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Stage</h3><p>Inputs move to the facility over Globus.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Submit</h3><p>Queued via the IRI API (PBS or Slurm).</p></div>
+        <div class="st"><div class="dotn"></div><h3>Poll</h3><p>Status and live logs in the Jobs list.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Read back</h3><p>Logs and results are read over IRI.</p></div>
+        <div class="st"><div class="dotn"></div><h3>Results</h3><p>Artifacts land in your project.</p></div>
       </div>
 
       <div class="card arch" style="margin-top:36px;padding:26px">
@@ -662,7 +654,7 @@ footer a { color: var(--text-dim); }
           <text class="tm" x="612" y="208">IRI · Globus</text>
         </svg>
       </div>
-      <p class="meta-line">Dispatch has been tested end to end on Polaris and Perlmutter. Other DOE facilities are not supported yet.</p>
+      <p class="meta-line">Tested end to end on Polaris and Perlmutter.</p>
     </div>
   </section>
 </main>
@@ -671,7 +663,7 @@ footer a { color: var(--text-dim); }
   <div class="wrap">
     <div>
       <a class="brand" href="#top" style="font-size:14px"><svg style="width:20px;height:20px"><use href="#logo"/></svg>HEP-Genesis-Agent</a>
-      <p style="margin-top:8px;max-width:52ch">Built by <a href="https://github.com/HEP-KE">HEP-KE</a>. MIT licensed. The backend is derived from <a href="https://github.com/HEP-KE/ke_genesis_agent">ke_genesis_agent</a>. During the alpha, send issues directly to the maintainers.</p>
+      <p style="margin-top:8px;max-width:52ch">Built by <a href="https://github.com/HEP-KE">HEP-KE</a>. MIT licensed. During the alpha, send issues directly to the maintainers.</p>
     </div>
     <div class="links">
       <a href="https://github.com/HEP-KE/hep-genesis-releases/releases">Releases</a>
