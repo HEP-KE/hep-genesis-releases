@@ -14,9 +14,9 @@ Grab the latest build from
 
 | Platform | File |
 |---|---|
-| macOS | `HEP-Genesis-Agent-<version>.dmg` |
-| Windows | `HEP-Genesis-Agent-Setup-<version>.exe` |
-| Linux | `HEP-Genesis-Agent-<version>.AppImage` or `.deb` |
+| macOS (Apple Silicon) | `HEP-Genesis-Agent-<version>-arm64.dmg` |
+| Windows (x64) | `HEP-Genesis-Agent-Setup-<version>-x64.exe` |
+| Linux (x64) | `HEP-Genesis-Agent-<version>-x86_64.AppImage` or `HEP-Genesis-Agent-<version>-amd64.deb` |
 
 **Most testers only need the app from the dmg file** Chat, research runs, reports, and
 remote (hosted) MCP tool servers — including their OAuth sign-in — work with
@@ -40,6 +40,19 @@ xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"
 
 Then open it normally. (This clears macOS's download-quarantine flag; you
 are trusting this build — that's what alpha testing is.)
+
+### Windows: "Windows protected your PC" (SmartScreen)
+
+Same cause — the installer is unsigned during the alpha. Click
+**More info → Run anyway**. The one-click installer puts the app under
+`%LOCALAPPDATA%\Programs\HEP-Genesis-Agent` and adds a Start-menu entry.
+
+### Linux
+
+- **AppImage**: `chmod +x HEP-Genesis-Agent-*.AppImage && ./HEP-Genesis-Agent-*.AppImage`
+  (needs FUSE 2: `sudo apt install libfuse2` on Ubuntu 22.04+).
+- **.deb**: `sudo apt install ./HEP-Genesis-Agent-*-amd64.deb` — installs to
+  `/opt/HEP-Genesis-Agent` with a desktop entry.
 
 ### Python backend (the `.whl` file) 
 
