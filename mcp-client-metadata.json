@@ -12,5 +12,5 @@
   "response_types": ["code"],
   "token_endpoint_auth_method": "none",
   "software_id": "hep-genesis-agent-desktop",
-  "software_version": "0.1.0"
+  "software_version": "0.2.4-alpha.1"
 }
