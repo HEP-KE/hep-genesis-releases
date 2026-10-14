@@ -199,6 +199,12 @@ h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; letter-spacing: -.00
 }
 .note strong { color: var(--text); font-weight: 600; }
 .note > div { min-width: 0; flex: 1; }
+.note .ic { flex-shrink: 0; width: 22px; height: 22px; color: var(--accent-text); margin-top: 1px; }
+.note h3 { color: var(--text); margin-bottom: 4px; }
+.note.callout { margin-top: 20px; background: var(--accent-soft); border-color: rgba(169, 107, 14, .35); border-left-width: 4px; }
+.note.callout .code { margin-top: 10px; }
+.hero-hint { font-size: 14px; color: var(--text-dim); margin-top: 8px; }
+.hero-hint a { font-weight: 500; }
 
 /* ------------------------------------------------------------------ code */
 .code {
@@ -297,6 +303,7 @@ footer a { color: var(--text-dim); }
     <symbol id="i-graph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6" cy="6" r="2.3"/><circle cx="18" cy="6" r="2.3"/><circle cx="12" cy="18" r="2.3"/><path d="M8 7.2 10.8 16M16 7.2 13.2 16M8.3 6h7.4"/></symbol>
     <symbol id="i-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m8.5 7.5-4.5 4.5 4.5 4.5M15.5 7.5 20 12l-4.5 4.5M13.5 5l-3 14"/></symbol>
     <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M3.5 6.5h6l2 2h9v10h-17z"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4.5M12 17.4h.01"/></symbol>
     <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></symbol>
   </defs>
 </svg>
@@ -330,6 +337,7 @@ footer a { color: var(--text-dim); }
       <a class="btn" href="#install">Other platforms</a>
     </div>
     <p class="meta-line" id="hero-meta">Free · MIT licensed · alpha build</p>
+    <p class="hero-hint">macOS says the app “is damaged”? <a href="#mac-damaged">Here's the one-line fix.</a></p>
 
     <figure class="shot">
       <img src="assets/app-screenshot.png" width="1195" height="1050" alt="The HEP-Genesis-Agent desktop app: navigation rail, chat history, a Quick-mode conversation computing an f(R) gravity matter power spectrum with an inline comparison figure, and the activity panel listing the tool calls.">
@@ -422,6 +430,15 @@ footer a { color: var(--text-dim); }
       </div>
       <p class="meta-line">The Python backend and CLI run on any platform with Python ≥ 3.10.</p>
 
+      <div class="note callout" id="mac-damaged">
+        <svg class="ic"><use href="#i-warn"/></svg>
+        <div>
+          <h3>macOS says “HEP-Genesis-Agent is damaged and can't be opened”</h3>
+          <p>The app is not damaged. Alpha builds are unsigned, so macOS quarantines them. Drag the app into <span class="path">/Applications</span>, then run this once in Terminal:</p>
+          <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"</pre></div>
+        </div>
+      </div>
+
       <div class="grid g2 tiers">
         <div class="card tier">
           <div class="n">Option 1 · app only</div>
@@ -449,8 +466,8 @@ footer a { color: var(--text-dim); }
       <div class="grid g2" style="margin-top:16px">
         <div class="card">
           <h3>macOS app</h3>
-          <p>Drag the app into <span class="path">/Applications</span>. Alpha builds are unsigned, so macOS may say the app “is damaged”. It isn't. Run this once:</p>
-          <div class="code"><button class="copy" type="button">Copy</button><pre><span class="p">$ </span>xattr -dr com.apple.quarantine "/Applications/HEP-Genesis-Agent.app"</pre></div>
+          <p>Open the DMG and drag the app into <span class="path">/Applications</span>. No Python needed.</p>
+          <p style="margin-top:10px">If macOS says the app “is damaged”, see <a href="#mac-damaged">the fix above</a>. It's one Terminal command.</p>
         </div>
         <div class="card">
           <h3>Python backend</h3>
